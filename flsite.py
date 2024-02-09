@@ -56,8 +56,10 @@ def add_post():
     db = get_db()
     dbase = FDataBase(db)
     if request.method == "POST":
+        if 'userLogged' not in session:
+            flash('Login to add post', category='error')
         if len(request.form['name']) > 4 and len(request.form['post']) > 10:
-            res = dbase.add_post(request.form['name'], request.form['post'])
+            res = dbase.add_post(request.form['name'], request.form['post'], session['userLogged'])
             if not res:
                 flash('Adding post error', category='error')
             else:
@@ -107,11 +109,30 @@ def about():
 def login():
     if 'userLogged' in session:
         return redirect(url_for('profile', username=session['userLogged']))
-    elif request.method == "POST" and request.form['username'] == 'selfedu' and request.form['psw'] == '123':
-        session['userLogged'] = request.form['username']
-        return redirect(url_for('profile', username=session['userLogged']))
+    elif request.method == "POST":
+        db = get_db()
+        dbase = FDataBase(db)
+        if dbase.is_user_exist(request.form['username'], request.form['password']):
+            session['userLogged'] = request.form['username']
+            return redirect(url_for('profile', username=session['userLogged']))
+        else:
+            flash('No such user', category='error')
 
     return render_template("login.html", title="Sign in", menu=menu)
+
+
+@app.route("/signup", methods=["POST", "GET"])
+def signup():
+    if request.method == "POST":
+        db = get_db()
+        dbase = FDataBase(db)
+        if dbase.add_user(request.form['username'], request.form['password']):
+            session['userLogged'] = request.form['username']
+            flash('Success', category='success')
+        else:
+            flash('Failed to save user', category='error')
+
+    return render_template("register.html", title="Sign in", menu=menu)
 
 
 @app.errorhandler(404)

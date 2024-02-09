@@ -19,10 +19,18 @@ class FDataBase:
             print("Sql Error " + str(e))
         return []
 
-    def add_post(self, title, text):
+    def add_post(self, title, text, username):
         try:
             tm = math.floor(time.time())
-            self.__cur.execute("INSERT INTO posts VALUES(NULL, ?, ?, ?)", (title, text, tm))
+            self.__cur.execute("INSERT INTO posts VALUES(NULL, ?, ?, ?, ?)", (title, text, tm, username))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Sql Error " + str(e))
+            return False
+
+    def add_user(self, name, password):
+        try:
+            self.__cur.execute("INSERT INTO user VALUES(?, ?)", (name, password))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Sql Error " + str(e))
@@ -40,6 +48,17 @@ class FDataBase:
             print("Sql Error " + str(e))
 
         return False, False
+
+    def is_user_exist(self, name, password):
+        try:
+            self.__cur.execute(f"SELECT * FROM user WHERE name = {name} and password= {password}")
+            res = self.__cur.fetchone()
+            if res:
+                return True
+        except sqlite3.Error as e:
+            print("Sql Error " + str(e))
+
+        return False
 
     def get_all_posts(self):
         try:
