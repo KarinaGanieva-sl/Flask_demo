@@ -15,13 +15,15 @@ $ pip install -r requirements.txt
 ## Flask Application Structure 
 ```
 .
-|──────/static
+|--────/static
 | |────-/css
-| |────---styles.css
+| ||────---styles.css
 |──────/templates
-| |────/FDataBase.py
-| |────/flsite.py
-| |────/sq_db.sql
+|--────/FDataBase.py
+|--────/flsite.py
+|--────/test.py
+|--────/sq_db.sql
+|--────/requirements.txt
 ```
 
 
