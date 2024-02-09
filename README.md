@@ -57,7 +57,7 @@ TESTING = False
 ## Run Flask
 ### Run flask for develop
 ```
-$ python webapp/run.py
+$ python flsite.py
 ```
 In flask, Default port is `5000`
 
